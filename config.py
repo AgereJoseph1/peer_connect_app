@@ -1,0 +1,9 @@
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+class Config:
+    # SQLite database file will be located at the project's root directory
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'peer_connect.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = 'your-secret-key'  # Used to add additional security for Flask sessions
