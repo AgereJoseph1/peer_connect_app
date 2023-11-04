@@ -1,7 +1,9 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from . import app
 from .controllers import user_controller
 from werkzeug.exceptions import BadRequest
+from flask import Blueprint
+
+app= Blueprint('main', __name__)
 
 # Home page/login route
 @app.route('/', methods=['GET', 'POST'])
