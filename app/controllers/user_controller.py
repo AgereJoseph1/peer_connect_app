@@ -1,7 +1,7 @@
 import requests
 from flask import current_app as app
-from models import User, db
-from utils import resolve_location
+from app.models import User, db
+from utils.func import resolve_location
 from werkzeug.security import generate_password_hash
 from flask import session
 from werkzeug.exceptions import BadRequest, NotFound
@@ -161,7 +161,7 @@ class UserController:
         db.session.commit()
 
     @staticmethod
-    def login_user(username, password):
+    def authenticate(username, password):
         """
         Authenticates a user and initiates a session.
 

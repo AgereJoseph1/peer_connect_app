@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --primary-color: #333333;
+    --input-color: #eef1f9;
+    --input-opacity: 0.5;
+    --header-size: 30px;
+    --header-weight: 700;
+    --subhead-color: #797979;
+    --subhead-size: 15px;
+    --subhead-weight: 500;
+    --subhead-width: 60%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/*****************************
+  1. SIGN UP PAGE &
+  2. SIGN IN PAGE STYLES
+  *****************************/
+.row {
+    padding: auto 0;
+    margin: auto 0;
+}
+
+.header {
+    font-size: var(--header-size);
+    font-weight: var(--header-weight);
+    color: var(--primary-color);
+    margin: 15px auto;
+}
+
+.subheader {
+    font-size: var(--subhead-size);
+    font-weight: var(--subhead-weight);
+    color: var(--subhead-color);
+    opacity: .8;
+    width: var(--subhead-width);
+    text-align: center;
+    margin: 0 auto;
+    padding-bottom: 30px;
+}
+
+.label {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.input-field {
+    border: none;
+    background-color: var(--input-color);
+    font-size: 17px;
+    margin-bottom: 20px;
+    padding: 15px 10px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 15px 20px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin: 40px 15px;
+    border-radius: 50px;
+}
+
+.alternate::before {
+    content: "";
+    display: block;
+    width: 30%;
+    height: 1px;
+    background-color:#797979;
+    position: relative;
+    top: 12px;
+    left: 15px;
+  }
+
+  .alternate::after {
+    content: "";
+    display: block;
+    width: 30%;
+    height: 1px;
+    background-color:#797979;
+    position: absolute;
+    right: 15px;
+    bottom: 10px;
+  }
+
+  a {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--primary-color);
+    text-decoration: underline;
+  }
+
+
+
+  /*****************************
+  3. PROFILE PAGE STYLES
+  *****************************/
+.img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.update-icon {
+    position: absolute;
+    bottom: 0;
+    right: 35%;
+    color: #fff;
+    background: var(--primary-color);
+    padding: 7px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.rounded-circle {
+    width: 150px;
+    height: 150px;
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--primary-color); /* Checked color */
+    border: 1px solid #D5D5D5;
+    width: 20px; /* Width of the checked checkbox */
+    height: 20px; /* Height of the checked checkbox */
+}
+
+.custom-checkbox .custom-control-label::before {
+    border: 1px solid #D5D5D5; /* Checkbox border color */
+    width: 20px; /* Width of the checkbox */
+    height: 20px; /* Height of the checkbox */
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+    content: ""; /* Remove the default checkmark */
+    position: absolute; /* Position the checkmark */
+    top: 50%; /* Adjust the vertical position of the checkmark */
+    left: 50%; /* Adjust the horizontal position of the checkmark */
+    transform: translate(-50%, -50%) rotate(45deg); /* Rotate the checkmark to form a tick */
+    width: 5px; /* Width of the checkmark */
+    height: 10px; /* Height of the checkmark */
+    background-color: white; /* Checkmark color */
+}
+
+
+.custom-checkbox .custom-control-label {
+    padding-left: 10px; /* Adjust label spacing */
+}
+
+
+  /*****************************
+  4. CREATE GROUP PAGE STYLES
+  *****************************/
+  .bucket {
+    width: 100%;
+    height: 5rem;
+    border-radius: 50px;
+    object-fit: cover;
+    background-color: var(--input-color);
+    align-items: center;
+    display: flex;
+  }
+
+  .items {
+    width: 4rem;
+    height: 80%;
+    background-color: var(--primary-color);
+    margin: 10px;
+    border-radius: 40px;
+    color: #fff;
+  }
