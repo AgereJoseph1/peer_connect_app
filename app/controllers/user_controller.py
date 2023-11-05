@@ -1,19 +1,25 @@
 import requests
 from flask import current_app as app
 from app.models import User, db
+from werkzeug.utils import secure_filename
 from utils.func import resolve_location
 from werkzeug.security import generate_password_hash
 from flask import session
 from werkzeug.exceptions import BadRequest, NotFound
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 class UserController:
     """
     Controller for user-related actions, including profile updates, user creation, 
     retrieval, updates, and authentication handling.
     """
+    staticmethod
+    def allowed_file(filename):
+        """Check if the file is allowed by extension."""
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     @staticmethod
-    def update_user_profile(user_id, email=None, phone=None, location_name=None):
+    def update_user_profile(user_id, email=None, phone=None, location_name=None, profile_picture=None):
         """
         Updates the profile information of a specific user.
 
@@ -53,6 +59,14 @@ class UserController:
             latitude, longitude = resolve_location(location_name)
             user.latitude = latitude
             user.longitude = longitude
+        
+        if profile_picture and UserController.allowed_file(profile_picture.filename):
+            filename = secure_filename(profile_picture.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            profile_picture.save(file_path)
+            user.profile_picture = file_path
+        elif profile_picture:
+            raise BadRequest("File type not allowed.")
 
         db.session.commit()
         return user

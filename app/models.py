@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import UniqueConstraint, Table, Column, Integer, String, DateTime, Float, Text, ForeignKey
 from sqlalchemy.orm import relationship
@@ -38,6 +39,7 @@ class User(db.Model):
     address = Column(String(255), nullable=True)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    profile_picture = db.Column(db.String(255), nullable=True)
     group_memberships = relationship('GroupMember', back_populates='user', cascade="all, delete-orphan")
     ambiances = relationship('Ambiance', secondary=user_ambiance, back_populates='users')
     cuisines = relationship('Cuisine', secondary=user_cuisine, back_populates='users')
@@ -52,6 +54,8 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.id} {self.username}>'
+    def set_profile_picture(self, filename):
+        self.profile_picture = secure_filename(filename)
 
 class GroupMember(db.Model):
     __tablename__ = 'group_members'
