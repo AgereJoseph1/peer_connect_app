@@ -190,3 +190,45 @@ class UserController:
         - Removes the user ID from the session.
         """
         session.pop('user_id', None)
+    
+    @staticmethod
+    def register_user(username, password, confirm_password):
+        """
+        Registers a new user if the provided credentials are valid.
+
+        Parameters:
+        - username: The username of the new user.
+        - password: The desired password for the new user.
+        - confirm_password: Password confirmation for verification.
+
+        Raises:
+        - BadRequest: If the username is already taken, passwords do not match,
+                      or any other validation fails.
+        """
+
+        # Check if the username already exists
+        if User.query.filter_by(username=username).first():
+            raise BadRequest("Username is already taken.")
+
+        # Check if passwords match
+        if password != confirm_password:
+            raise BadRequest("Passwords do not match.")
+
+        # Here you can add additional password strength checks or other validations as needed.
+
+        # Create a new user instance
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, password_hash=hashed_password)
+
+        # Add the new user to the database session
+        db.session.add(new_user)
+
+        # Commit the session to save the user to the database
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()  # Rollback the session on error
+            raise BadRequest(str(e))
+
+        # If you get to this point, the user was registered successfully
+        return new_user

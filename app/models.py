@@ -1,14 +1,35 @@
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import UniqueConstraint, Column, Integer, String, DateTime, Float, Text, ForeignKey
+from sqlalchemy import UniqueConstraint, Table, Column, Integer, String, DateTime, Float, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 import uuid
 from .import db
 
+# Association tables for many-to-many relationships
+user_ambiance = Table('user_ambiance', db.Model.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('ambiance_id', Integer, ForeignKey('ambiances.id'))
+)
+
+user_cuisine = Table('user_cuisine', db.Model.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('cuisine_id', Integer, ForeignKey('cuisines.id'))
+)
+
+user_dietary = Table('user_dietary', db.Model.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('dietary_id', Integer, ForeignKey('dietary_restrictions.id'))
+)
+
+user_budget = Table('user_budget', db.Model.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('budget_id', Integer, ForeignKey('budget_preferences.id'))
+)
+
+# User model
 class User(db.Model):
     __tablename__ = 'users'
-
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
     password_hash = Column(String(128))
@@ -18,6 +39,10 @@ class User(db.Model):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     group_memberships = relationship('GroupMember', back_populates='user', cascade="all, delete-orphan")
+    ambiances = relationship('Ambiance', secondary=user_ambiance, back_populates='users')
+    cuisines = relationship('Cuisine', secondary=user_cuisine, back_populates='users')
+    dietary_restrictions = relationship('DietaryRestriction', secondary=user_dietary, back_populates='users')
+    budget_preferences = relationship('BudgetPreference', secondary=user_budget, back_populates='users')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -78,3 +103,47 @@ class InviteToken(db.Model):
 
     def __repr__(self):
         return f'<InviteToken {self.token} for Group {self.group_id}>'
+
+
+
+
+# User model
+
+# Ambiance model
+class Ambiance(db.Model):
+    __tablename__ = 'ambiances'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)
+
+    # Relationship with User
+    users = relationship('User', secondary=user_ambiance, back_populates='ambiances')
+
+# Cuisine model
+class Cuisine(db.Model):
+    __tablename__ = 'cuisines'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)
+
+    # Relationship with User
+    users = relationship('User', secondary=user_cuisine, back_populates='cuisines')
+
+# DietaryRestriction model
+class DietaryRestriction(db.Model):
+    __tablename__ = 'dietary_restrictions'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)
+
+    # Relationship with User
+    users = relationship('User', secondary=user_dietary, back_populates='dietary_restrictions')
+
+# BudgetPreference model
+class BudgetPreference(db.Model):
+    __tablename__ = 'budget_preferences'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)
+
+    # Relationship with User
+    users = relationship('User', secondary=user_budget, back_populates='budget_preferences')
+
+# Remember to create the tables in the database if they don't exist
+# db.create_all()

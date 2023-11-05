@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from .controllers import user_controller
+from .controllers import user_controller,preference_controller
 from werkzeug.exceptions import BadRequest
 from flask import Blueprint
 
@@ -53,3 +53,26 @@ def user_profile(username):
 @app.route('/<username>/preferences')
 def preferences(username):
     return render_template('preference.html')
+
+
+# routes.py
+
+
+@app.route('/update_preferences', methods=['POST'])
+def update_preferences():
+    user_id = request.form.get('user_id')
+    
+    # Get lists of preference IDs from the form
+    ambiance_ids = request.form.getlist('ambiance')
+    cuisine_ids = request.form.getlist('cuisine')
+    dietary_ids = request.form.getlist('dietary')
+    budget_ids = request.form.getlist('budget')
+    
+    # Update user preferences
+   
+    preference_controller.PreferencesController.update_user_preferences.update_user_preferences(
+        user_id, ambiance_ids, cuisine_ids, dietary_ids, budget_ids
+    )
+    
+    # Redirect or render template with a success message
+    return redirect('/some_success_page')
