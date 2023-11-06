@@ -15,7 +15,7 @@
 
     <div class="container my-5 px-0">
         <div class="row justify-content-center">
-            </form>
+            <form class="row" action="/register" method="post">
                 <div class="col-12 text-center">
                     <h1 class="header">Create Account</h1>
                     <h6 class="subheader">Fill your information below to create
@@ -23,18 +23,13 @@
                 </div>
 
                 <div class="col-12">
-                    <label class="label">Name</label>
-                    <input type="text" class="form-control input-field" placeholder="John Doe">
-                </div>
-
-                <div class="col-12">
-                    <label class="label">Email</label>
-                    <input type="text" class="form-control input-field" placeholder="prince@unm.edu">
+                    <label class="label">Username</label>
+                    <input type="text" name="username" class="form-control input-field" placeholder="eg: Adam22">
                 </div>
 
                 <div class="col-12">
                     <label class="label">Password</label>
-                    <input type="password" class="form-control input-field" placeholder="****************">
+                    <input type="password" name="password" class="form-control input-field" placeholder="****************">
                 </div>
 
                 <button type="submit" class="btn btn-dark">Sign Up</button>

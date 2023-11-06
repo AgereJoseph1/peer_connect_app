@@ -57,29 +57,29 @@
 
                 <div class="col-12">
                     <label class="label">Username</label>
-                    <input type="text" class="form-control input-field" placeholder="Adam22">
+                    <input type="text" class="form-control input-field" value="{{ username }}" disabled>
                 </div>
 
                 <div class="col-12">
                     <label class="label">Phone</label>
-                    <input type="tel" class="form-control input-field" placeholder="">
+                    <input type="tel" class="form-control input-field" name="phone">
                 </div>
 
                 <div class="col-12">
                     <label class="label">Email</label>
-                    <input type="text" class="form-control input-field" placeholder="prince@unm.edu">
+                    <input type="text" class="form-control input-field" placeholder="prince@unm.edu" name="email">
                 </div>
 
                 <div class="col-12">
                     <label class="label">Address</label>
-                    <input type="text" class="form-control input-field" placeholder="--SELECT FROM MAP--">
+                    <input type="text" id="locationInput" class="form-control input-field" placeholder="longitude, latitude" onclick="getCurrentLocation()" name="address">
                 </div>
                 <div class="row">
                     <div class="col-6">
                         <button type="submit" class="btn btn-dark">Save</button>
                     </div>
                     <div class="col-6">
-                        <a class="btn btn-dark" href="/preferences">Skip</a>
+                        <a class="btn btn-dark" href="{{ url_for('main.preferences', username=username) }}">Skip</a>
                     </div>
                 </div>
                 
@@ -88,6 +88,7 @@
     </div>
     
     <script>
+            // Replace image placeholder
         function selectNewImage() {
             // Trigger the hidden file input element to select a new image
             document.getElementById("imageInput").click();
@@ -103,6 +104,23 @@
                     reader.readAsDataURL(file);
                 }
             });
+        }
+
+        // Get current location
+        function getCurrentLocation() {
+            if ("geolocation" in navigator) {
+                // Get the user's current position
+                navigator.geolocation.getCurrentPosition(function (position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // Set the input field value to the captured latitude and longitude
+                const locationInput = document.getElementById("locationInput");
+                locationInput.value = `${latitude}, ${longitude}`;
+                });
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
         }
     </script>
 
