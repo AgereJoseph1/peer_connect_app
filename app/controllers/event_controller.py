@@ -16,7 +16,7 @@ class EventController:
             raise ValueError("Date format must be YYYY-MM-DD HH:MM:SS")
 
     @staticmethod
-    def create_event(group_id, activity_type, start_time, end_time, location_name=None, location_address=None):
+    def create_event(group_id, activity_type,time,duration):
         """Creates a new event and adds it to the database."""
         # Check if the group exists in the database
         group = Group.query.get(group_id)
@@ -24,17 +24,16 @@ class EventController:
             raise NotFound("Group not found.")
 
         # Parse and validate start_time and end_time
-        start_time = EventController.parse_date(start_time)
-        end_time = EventController.parse_date(end_time)
+        time= EventController.parse_date(time)
+      
 
         # Create a new Event instance with the provided details
         event = Event(
             group_id=group_id,
             activity_type=activity_type,
-            start_time=start_time,
-            end_time=end_time,
-            location_name=location_name,
-            location_address=location_address
+            time=time,
+            duration=duration
+            
         )
 
         # Add the new event to the database session and commit to save changes
@@ -94,18 +93,4 @@ class EventController:
             raise NotFound("Event not found.")
         return event
 
-    @staticmethod
-    def check_event_overlap(group_id, start_time, end_time):
-        """Checks for overlapping events within the same group and time range."""
-        # Parse and validate start_time and end_time
-        start_time = EventController.parse_date(start_time)
-        end_time = EventController.parse_date(end_time)
-
-        # Find overlapping events
-        overlapping_events = Event.query.filter(
-            Event.group_id == group_id,
-            Event.end_time > start_time,
-            Event.start_time < end_time
-        ).all()
-
-        return bool(overlapping_events)
+   
