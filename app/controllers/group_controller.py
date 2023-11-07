@@ -81,3 +81,21 @@ class GroupController:
         db.session.commit()
         # Return the new member object
         return new_member
+    
+    @staticmethod
+    def get_group_members(group_id):
+        # Retrieve the group from the database
+        group = Group.query.get(group_id)
+        if group is None:
+            raise NotFound("Group not found.")
+        
+        # Query the GroupMember model for all members of the group
+        group_members = GroupMember.query.filter_by(group_id=group_id).all()
+        if not group_members:
+            raise NotFound("No members found for the group.")
+        
+        # Extract user information from the group members
+        members_info = [{'user_id': member.user_id, 'username': member.user.username, 'email': member.user.email} for member in group_members]
+        
+        # Return the list of members' information
+        return members_info
