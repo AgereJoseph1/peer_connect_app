@@ -8,4 +8,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'your-secret-key'  # Used to add additional security for Flask sessions
     UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
+    BANNER_UPLOAD_FOLDER = os.path.join(basedir, 'banner_uploads')
 BASE_URL = 'http://localhost:5000'  # Base URL for the application

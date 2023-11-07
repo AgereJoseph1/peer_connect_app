@@ -4,6 +4,7 @@ from werkzeug.exceptions import BadRequest, NotFound
 from app import db
 from werkzeug.utils import secure_filename
 import os
+from flask import current_app as app
 from utils.func import allowed_file
 
 # Define a GroupController class to handle group-related actions
@@ -24,14 +25,20 @@ class GroupController:
         if banner and allowed_file(banner.filename):
             # Secure the filename and create a path where the banner will be saved
             filename = secure_filename(banner.filename)
-            banner_path = os.path.join('path/to/banner_images', filename)
+            # Use the BANNER_UPLOAD_FOLDER defined in the app's configuration
+            banner_path = os.path.join(app.config['BANNER_UPLOAD_FOLDER'], filename)
+            # Ensure the BANNER_UPLOAD_FOLDER exists
+            if not os.path.exists(app.config['BANNER_UPLOAD_FOLDER']):
+                os.makedirs(app.config['BANNER_UPLOAD_FOLDER'])
             # Save the banner to the specified path
             banner.save(banner_path)
             # Assign the saved banner's path to the group's banner_image attribute
             group.banner_image = banner_path
-        else:
-            # If no banner is provided or the file is not allowed, use a default image
-            group.banner_image = 'default_banner.png'
+        elif banner:
+            raise BadRequest("File type not allowed.")
+        # If no banner is provided, leave the group.banner_image as None
+        # This could also be set to an empty string if that works better with your application logic
+        # group.banner_image = None
 
         # Add the new group to the database session and commit to save changes
         db.session.add(group)
@@ -44,6 +51,8 @@ class GroupController:
 
         # Return the newly created group object
         return group
+
+    # ... rest of the methods from your GroupController class ...
 
     # Static method to generate an invitation link for a group
     @staticmethod
