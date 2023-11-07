@@ -61,7 +61,7 @@ def register():
 
 '''
 ================================================
-TODO: Add route for creating a group
+Route for creating a group
 ================================================
 '''
 @app.route('/create-group', methods=['GET', 'POST'])
@@ -143,13 +143,17 @@ def preferences(username):
         budget_ids = request.form.getlist('budget')
 
         # Update user preferences
-        preference_controller.PreferencesController.update_user_preferences(
+        try:
+            preference_controller.PreferencesController.update_user_preferences(
             user_id, ambiance_ids, cuisine_ids, dietary_ids, budget_ids
-        )
-        
-        flash('Preferences updated successfully', 'success')
-        return redirect(url_for('main.create_group', username=username))
+            )
 
+            flash('Preferences updated successfully', 'success')
+            return redirect(url_for('main.create_group', username=username))
+        except NotFound:
+            flash('User not found', 'error')
+        except BadRequest as e:
+            flash(str(e), 'error')
 
     return render_template('preference.html', username=username)
 
@@ -179,13 +183,17 @@ Route to Group Meetup
 @app.route('/meetup/<group_id>', methods=['GET', 'POST'])
 def meetup(group_id):
     if request.method == 'POST':
-        # Get the meetup details from the form
+        # Get the meetup details from form
         activity_type = request.form.get('activity_type')
-        date = request.form.get('date')
+        # date = request.form.get('date')
         start_time = request.form.get('start_time')
         duration = request.form.get('duration')
-        # TODO:
-        # Create the meetup
+        
+        '''Create the meetup - > a controller to access 
+           each member's preferences and generate a list 
+           of places
+        '''
+
         # Redirect to the places page
         return redirect(url_for('main.meetup', group_id=group_id))
 
