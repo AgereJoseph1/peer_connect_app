@@ -152,7 +152,7 @@ class Event(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
     activity_type = db.Column(db.String(128), nullable=False)
-    time = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
     duration= db.Column(db.String(20), nullable=False)
      # Address of the recommended place
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))  # Link to the group
