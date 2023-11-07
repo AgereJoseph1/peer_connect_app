@@ -13,7 +13,18 @@
     <title>Peer Connect</title>
   </head>
   <body>
-
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+                {% for message in messages %}
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                {% endfor %}
+        {% endif %}
+    {% endwith %}
         
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +55,7 @@
         <h4 class="my-4 text-center">Complete your profile</h4>
         
         <!-- Profile Photo -->
-        <form action="">
+        <form action="{{ url_for('main.user_profile', username=username) }}" method="post">
             <div class="row">
                 <div class="col-12 my-4">
                      <!-- Input for selecting a new image -->

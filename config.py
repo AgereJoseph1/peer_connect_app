@@ -7,3 +7,5 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'peer_connect.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'your-secret-key'  # Used to add additional security for Flask sessions
+
+BASE_URL = 'http://localhost:5000'  # Base URL for the application

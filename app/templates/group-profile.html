@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <title>Peer Connect</title>
+  </head>
+  <body>
+
+        
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+            <!-- Your logo or brand name goes here -->
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+            </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- Main Content -->
+    <div class="container justify-content-center grp-profile">
+        <div class="d-flex justify-content-between align-items-center head">
+            <h6 class="mt-4 pt-2">Welcome to, <strong>{{ group.name }}</strong></h6>
+            <a href="#" class="btn">Edit</a>
+        </div>
+        
+        
+        <!-- CREATE BUTTON -->
+        <div class="row">
+            <div class="img-frame mb-1">
+                <img src="{{ group.banner_image }}" alt="Profile Photo" class="img-fluid ">
+            </div>
+            <p class="desc">
+                {{ group.description }}
+            </p>
+        </div>
+
+        <!-- LIST OF GROUP MEMBERS -->
+        <div class="row members">
+            <h6 class="my-2">Members</h6>
+            <div class="col-12 px-0 mb-4">
+                {% for member in group.members %}
+                    <div class="d-flex justify-content-between align-items-center my-2">
+                        <img src="{{ url_for('static', filename='images/profile.png') }}" width="10%" alt="">
+                        <p>{{ member.username }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row actions">
+            <!-- INVITE BUTTON -->
+            <div class="invite-btn d-flex align-items-center"  data-toggle="modal" data-target=".bd-example-modal-sm">
+                <div class="wrapper d-flex align-items-center justify-content-center">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="item-text ml-3">
+                    <h6>Invite</h6>
+                </div>
+            </div><hr><hr>
+            <a href="{{ url_for('main.meetup', group_id=lipsum) }}" class="btn btn-dark">
+                Meet
+            </a>
+        </div>
+        
+    </div>
+
+    <!-- Invite Link Modal -->
+    <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body d-flex align-items-center">
+                    <input type="text" class="form-control" id="inviteLink" value="Your Invite Link" readonly>
+                    <span class="copy-icon mx-3" id="copyIcon"><i class="fas fa-copy"></i></span>
+                    <div id="copyMessage" style="display: none; background-color: chartreuse;">Copied to clipboard</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inviteButton = document.querySelector('.invite-btn');
+            const inviteLinkInput = document.getElementById('inviteLink');
+            const copyIcon = document.getElementById('copyIcon');
+            
+            inviteButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent any default button behavior
+                fetch('/generate-invite/{{group.id}}') // Make an AJAX request to the Flask server
+                    .then(response => response.json())
+                    .then(data => {
+                        inviteLinkInput.value = data.inviteLink; // Update the input with the invite link
+                        $('#myModal').modal('show'); // Show the modal
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            copyIcon.addEventListener('click', function() {
+                inviteLink.select();
+                document.execCommand('copy');
+
+                // Optionally, you can display a message to indicate that the text is copied
+                showCopyMessage();
+            });
+
+            function showCopyMessage() {
+                const copyMessage = document.getElementById('copyMessage');
+                copyMessage.style.display = 'block';
+                setTimeout(function() {
+                    copyMessage.style.display = 'none';
+                }, 2000); // Hide the message after 2 seconds
+            }
+            
+        });
+
+
+        // Function to Copy Invite Link
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const inviteLink = document.getElementById('inviteLink');
+        //     const copyIcon = document.getElementById('copyIcon');
+
+        //     copyIcon.addEventListener('click', function() {
+        //         inviteLink.select();
+        //         document.execCommand('copy');
+
+        //         // Optionally, you can display a message to indicate that the text is copied
+        //         showCopyMessage();
+        //     });
+
+        //     function showCopyMessage() {
+        //         const copyMessage = document.getElementById('copyMessage');
+        //         copyMessage.style.display = 'block';
+        //         setTimeout(function() {
+        //             copyMessage.style.display = 'none';
+        //         }, 2000); // Hide the message after 2 seconds
+        //     }
+        // });
+    </script>
+    
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+  </body>
+</html>
