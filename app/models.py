@@ -109,10 +109,6 @@ class InviteToken(db.Model):
         return f'<InviteToken {self.token} for Group {self.group_id}>'
 
 
-
-
-# User model
-
 # Ambiance model
 class Ambiance(db.Model):
     __tablename__ = 'ambiances'
@@ -151,3 +147,19 @@ class BudgetPreference(db.Model):
 
 # Remember to create the tables in the database if they don't exist
 # db.create_all()
+
+class Event(db.Model):
+    __tablename__ = 'events'
+    id = db.Column(db.Integer, primary_key=True)
+    activity_type = db.Column(db.String(128), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    location_name = db.Column(db.String(128))  # Name of the recommended place
+    location_address = db.Column(db.String(256))  # Address of the recommended place
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))  # Link to the group
+
+    # Relationships
+    group = db.relationship('Group', backref=db.backref('events', lazy='dynamic'))  # Back-reference to allow group.events access
+
+    def __repr__(self):
+        return f'<Event {self.id} {self.activity_type}>'

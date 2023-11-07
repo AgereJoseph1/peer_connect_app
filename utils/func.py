@@ -4,6 +4,8 @@ from flask import current_app as app
 import googlemaps
 from googlemaps.exceptions import ApiError
 
+
+
 def resolve_location(location_name):
     # Replace 'YOUR_API_KEY' with your actual Google Places API key
     GOOGLE_API_KEY = app.config['GOOGLE_API_KEY']
@@ -120,3 +122,5 @@ def find_meeting_place_with_photo(api_key, location, place_type="restaurant"):
 def allowed_file(filename):
     # Ensure that the file has a valid extension
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+
+
