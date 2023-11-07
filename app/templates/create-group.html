@@ -13,7 +13,18 @@
     <title>Peer Connect</title>
   </head>
   <body>
-
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+                {% for message in messages %}
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                {% endfor %}
+        {% endif %}
+    {% endwith %}
         
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,19 +59,67 @@
         
         <!-- CREATE BUTTON -->
         <div class="row">
-            <form class="bucket" method="post">
+            <div class="bucket" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">
                 <div class="items d-flex align-items-center justify-content-center">
                     <i class="fas fa-plus"></i>
                 </div>
                 <div class="item-text ml-4">
                     <h6>Create a group</h6>
                 </div>
-            </form>
-        </div>
+            </div>
+        </div><br>
+
+        <!-- Group List -->
+        <h6 class="my-4">Member Groups</h6>
+        <ul class="list-group list-group-flush my-4">
+            {% for group in user_groups %}
+                <a href="{{ url_for('main.group_profile', group_id=group.id) }}"><li class="list-group-item">{{ group.name }}</li></a>
+            {% endfor %}
+        </ul>
 
     </div>
     
-    
+    <!-- Form modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Group Details</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form action="" method="post">
+                <div class="col-12">
+                    <label class="label">Title</label>
+                    <input type="text" name="title" class="form-control input-field" placeholder="Lorem Ipsum">
+                </div>
+                <div class="col-12">
+                    <label class="label">Group Description</label>
+                    <textarea class="form-control input-field" name="description" placeholder="Cohort 5 official Summer Intern  group" rows="6"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="label">Page Banner</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                        </div>
+                        <div class="custom-file">
+                          <input type="file" name="banner" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                          <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                        </div>
+                      </div>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-dark">Create</button>
+                </div>
+            </form>
+        </div>
+        </div>
+    </div>
+    </div>
 
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

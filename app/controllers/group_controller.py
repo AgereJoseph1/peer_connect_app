@@ -1,5 +1,5 @@
 # Import necessary modules and classes
-from models import Group, GroupMember, InviteToken, User
+from app.models import Group, GroupMember, InviteToken, User
 from werkzeug.exceptions import BadRequest, NotFound
 from app import db
 from werkzeug.utils import secure_filename
@@ -11,14 +11,14 @@ class GroupController:
 
     # Static method to create a new group
     @staticmethod
-    def create_group(name, user_id, distribution, banner=None):
+    def create_group(name, user_id, description, banner=None):
         # Check if the user exists in the database
         user = User.query.get(user_id)
         if user is None:
             raise NotFound("User not found.")
 
-        # Create a new Group instance with the provided name and distribution
-        group = Group(name=name, distribution=distribution)
+        # Create a new Group instance with the provided name and description
+        group = Group(name=name, description=description)
 
         # If a banner image is provided and it's a valid file type
         if banner and allowed_file(banner.filename):
@@ -81,3 +81,37 @@ class GroupController:
         db.session.commit()
         # Return the new member object
         return new_member
+
+    # Static method to get all members of a group
+    @staticmethod
+    def get_user_groups(user_id):
+        # Check if the user exists in the database
+        user = User.query.get(user_id)
+        if user is None:
+            raise NotFound("User not found.")
+
+        # Get all the groups where the user is a member
+        user_groups = Group.query.join(GroupMember).filter(GroupMember.user_id == user_id).all()
+
+        return user_groups
+
+    # Static method to get all members of a group
+    @staticmethod
+    def get_group_details(group_id):
+        """
+        Retrieves the details of a specific group from the database.
+
+        Parameters:
+        - group_id: The ID of the group to retrieve.
+
+        Returns:
+        - The group object with the specified ID.
+
+        Raises:
+        - NotFound: The group does not exist.
+        """
+        group = Group.query.get(group_id)
+        if group is None:
+            raise NotFound("Group not found.")
+
+        return group

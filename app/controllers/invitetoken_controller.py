@@ -1,4 +1,4 @@
-from models import InviteToken, GroupMember, db
+from app.models import InviteToken, GroupMember, db
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import BadRequest, NotFound
 

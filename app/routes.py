@@ -1,7 +1,8 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from .controllers import user_controller,preference_controller
-from werkzeug.exceptions import BadRequest
-from flask import Blueprint
+from .controllers import user_controller,preference_controller,group_controller, invitetoken_controller
+from werkzeug.exceptions import BadRequest, NotFound
+from flask import Blueprint, jsonify
+from config import BASE_URL
 
 app= Blueprint('main', __name__)
 
@@ -46,7 +47,7 @@ def register():
         # Register user
         try:
             user_controller.UserController.create_user(username, password)
-            # flash('Registration successful', 'success')
+            flash('Registration successful', 'success')
             # Get user id
             user_id = session.get('user_id')
             # Redirect user to profile page
@@ -63,13 +64,35 @@ def register():
 TODO: Add route for creating a group
 ================================================
 '''
-@app.route('/create-group')
+@app.route('/create-group', methods=['GET', 'POST'])
 def create_group():
     if request.method == 'POST':
-        pass
+        title = request.form.get('title')
+        user_id = session.get('user_id')
+        distribution = request.form.get('description')
+        banner = request.files.get('banner')
+
+        try:
+            group_controller.GroupController.create_group(
+                title,
+                user_id,
+                distribution,
+                banner=banner
+            )
+            flash('Group created successfully', 'success')
+            # Redirect to a page that displays the newly created group
+            return redirect(url_for('main.create_group'))
+        except NotFound:
+            flash('User not found', 'error')
+        except BadRequest as e:
+            flash(str(e), 'error')
 
     # Default route
-    return render_template('create-group.html')
+    user_id = session.get('user_id')
+    
+    user_groups = group_controller.GroupController.get_user_groups(user_id)
+    return render_template('create-group.html', user_groups=user_groups)
+    
 
 
 '''
@@ -83,13 +106,23 @@ def user_profile(username):
         email = request.form.get('email')
         phone = request.form.get('phone')
         location_name = request.form.get('address')
+        profile_pic = request.files.get('profile_pic')
 
-        '''
-        JOSEPH: Image is part of the profile.
-        Plz modify the "update_user_profile" in user_controller and it's subsequent model
-        to include the image.
-        '''
-        # TODO: 
+        try:
+            user_controller.UserController.update_user_profile(
+                user_id=session.get('user_id'),
+                email=email,
+                phone=phone,
+                location_name=location_name,
+                profile_picture=profile_pic
+            )
+            flash('Profile updated successfully', 'success')
+            # Redirect to a profile page
+            return redirect(url_for('user_profile', username=username))
+        except NotFound:
+            flash('User not found', 'error')
+        except BadRequest as e:
+            flash(str(e), 'error')
 
     return render_template('profile.html', username=username)
 
@@ -106,7 +139,7 @@ def preferences(username):
     return render_template('preference.html')
 
 
-# routes.py
+
 
 
 @app.route('/update_preferences', methods=['POST'])
@@ -120,10 +153,64 @@ def update_preferences():
     budget_ids = request.form.getlist('budget')
     
     # Update user preferences
-   
     preference_controller.PreferencesController.update_user_preferences.update_user_preferences(
         user_id, ambiance_ids, cuisine_ids, dietary_ids, budget_ids
     )
     
     # Redirect or render template with a success message
     return redirect('/some_success_page')
+
+
+
+'''
+================================================
+Route to Group Profile
+================================================
+'''
+@app.route('/<group_id>/group')
+def group_profile(group_id):
+    try:
+        group = group_controller.GroupController.get_group_details(group_id)
+        # Render a template with the group details
+        return render_template('group-profile.html', group=group)
+    except NotFound as e:
+        # Handle the case where the group is not found
+        flash('Group not found.', 'error')
+        return redirect(url_for('main.create_group'))
+
+
+'''
+================================================
+Route to Group Meetup
+================================================
+'''
+@app.route('/<group_id>/meetup')
+def meetup(group_id):
+    return render_template('meetup.html', group_id=group_id)
+
+
+'''
+================================================
+Route to Places
+================================================
+'''
+@app.route('/places', methods=['GET', 'POST'])
+def places():
+    if request.method == 'POST':
+        return "Hello places"
+    
+    return render_template('places.html')
+
+
+'''
+================================================
+Generate Invite Token
+================================================
+'''
+@app.route('/generate-invite/<group_id>')
+def generate_invite(group_id):
+    # generate invite token
+    invite_token =   invitetoken_controller.InviteTokenController.generate_invite_token(group_id)
+    invite_link = BASE_URL + '/join-group/' + invite_token
+    # return invite link
+    return jsonify({'inviteLink': invite_link})
