@@ -134,32 +134,24 @@ Route to view/update user preferences
 @app.route('/<username>/preferences', methods=['GET', 'POST'])
 def preferences(username):
     if request.method == 'POST':
-        pass
+        user_id = session.get('user_id')
 
-    return render_template('preference.html')
+        # Get lists of preference IDs from the form
+        ambiance_ids = request.form.getlist('ambiance')
+        cuisine_ids = request.form.getlist('cuisine')
+        dietary_ids = request.form.getlist('dietary')
+        budget_ids = request.form.getlist('budget')
+
+        # Update user preferences
+        preference_controller.PreferencesController.update_user_preferences(
+            user_id, ambiance_ids, cuisine_ids, dietary_ids, budget_ids
+        )
+        
+        flash('Preferences updated successfully', 'success')
+        return redirect(url_for('main.create_group', username=username))
 
 
-
-
-
-@app.route('/update_preferences', methods=['POST'])
-def update_preferences():
-    user_id = request.form.get('user_id')
-    
-    # Get lists of preference IDs from the form
-    ambiance_ids = request.form.getlist('ambiance')
-    cuisine_ids = request.form.getlist('cuisine')
-    dietary_ids = request.form.getlist('dietary')
-    budget_ids = request.form.getlist('budget')
-    
-    # Update user preferences
-    preference_controller.PreferencesController.update_user_preferences.update_user_preferences(
-        user_id, ambiance_ids, cuisine_ids, dietary_ids, budget_ids
-    )
-    
-    # Redirect or render template with a success message
-    return redirect('/some_success_page')
-
+    return render_template('preference.html', username=username)
 
 
 '''
@@ -184,8 +176,19 @@ def group_profile(group_id):
 Route to Group Meetup
 ================================================
 '''
-@app.route('/<group_id>/meetup')
+@app.route('/meetup/<group_id>', methods=['GET', 'POST'])
 def meetup(group_id):
+    if request.method == 'POST':
+        # Get the meetup details from the form
+        activity_type = request.form.get('activity_type')
+        date = request.form.get('date')
+        start_time = request.form.get('start_time')
+        duration = request.form.get('duration')
+        # TODO:
+        # Create the meetup
+        # Redirect to the places page
+        return redirect(url_for('main.meetup', group_id=group_id))
+
     return render_template('meetup.html', group_id=group_id)
 
 

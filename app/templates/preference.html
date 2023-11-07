@@ -1,42 +1,4 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
-    <title>Peer Connect</title>
-  </head>
-  <body>
-
-        
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="#">
-            <!-- logo or brand name goes here -->
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-        </a>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-            </li>
-            </ul>
-        </div>
-    </nav>
-
+{% include "base.html" %}
 
     <!-- Main Content -->
     <div class="container">
@@ -47,7 +9,7 @@
         </h6>
 
         <!-- Profile Photo -->
-        <form action="">
+        <form action="{{ url_for('main.preferences', username=username)}}" method="post">
             <div class="row">
 
                 <div class="col-12 mt-3">
@@ -55,26 +17,26 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck1">
+                                <input class="custom-control-input" name="ambiance" type="checkbox" id="customCheck1">
                                 <label class="custom-control-label" for="customCheck1">Quiet</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck2">
+                                <input class="custom-control-input" name="ambiance" type="checkbox" id="customCheck2">
                                 <label class="custom-control-label" for="customCheck2">Lively</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck3">
+                                <input class="custom-control-input" name="ambiance" type="checkbox" id="customCheck3">
                                 <label class="custom-control-label" for="customCheck3">Cozy</label>
                             </div>
                         </div>
 
                         <div class="col-6">
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck4">
+                                <input class="custom-control-input" name="ambiance" type="checkbox" id="customCheck4">
                                 <label class="custom-control-label" for="customCheck4">Vibrant</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck5">
+                                <input class="custom-control-input" name="ambiance" type="checkbox" id="customCheck5">
                                 <label class="custom-control-label" for="customCheck5">Relaxed</label>
                             </div>
                         </div>
@@ -86,26 +48,26 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck6">
+                                <input class="custom-control-input" name="cuisine" type="checkbox" id="customCheck6">
                                 <label class="custom-control-label" for="customCheck6">Italian</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck7">
+                                <input class="custom-control-input" name="cuisine" type="checkbox" id="customCheck7">
                                 <label class="custom-control-label" for="customCheck7">Mexican</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck8">
+                                <input class="custom-control-input" name="cuisine" type="checkbox" id="customCheck8">
                                 <label class="custom-control-label" for="customCheck8">Asian</label>
                             </div>
                         </div>
 
                         <div class="col-6">
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck9">
+                                <input class="custom-control-input" name="cuisine" type="checkbox" id="customCheck9">
                                 <label class="custom-control-label" for="customCheck9">African</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck10">
+                                <input class="custom-control-input" name="cuisine" type="checkbox" id="customCheck10">
                                 <label class="custom-control-label" for="customCheck10">Vegan</label>
                             </div>
                         </div>
@@ -117,22 +79,22 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck11">
+                                <input class="custom-control-input" name="dietary" type="checkbox" id="customCheck11">
                                 <label class="custom-control-label" for="customCheck11">None</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck12">
+                                <input class="custom-control-input" name="dietary" type="checkbox" id="customCheck12">
                                 <label class="custom-control-label" for="customCheck12">Vegetarian</label>
                             </div>
                         </div>
 
                         <div class="col-6">
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck13">
+                                <input class="custom-control-input" name="dietary" type="checkbox" id="customCheck13">
                                 <label class="custom-control-label" for="customCheck13">Gluten-Free</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="customCheck14">
+                                <input class="custom-control-input" name="dietary" type="checkbox" id="customCheck14">
                                 <label class="custom-control-label" for="customCheck14">Diary-Free</label>
                             </div>
                         </div>
@@ -141,19 +103,22 @@
 
                 <div class="col-12 mt-3">
                     <label class="label">Budget Preference</label>
-                        <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input" type="checkbox" id="customCheck15">
-                            <label class="custom-control-label" for="customCheck15">Budget-Friendly</label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input" type="checkbox" id="customCheck16">
-                            <label class="custom-control-label" for="customCheck16">Moderate</label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input" type="checkbox" id="customCheck17">
-                            <label class="custom-control-label" for="customCheck17">High-End</label>
-                        </div>
-                        
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" name="budget" type="checkbox" id="customCheck15">
+                                    <label class="custom-control-label" for="customCheck15">Budget-Friendly</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" name="budget" type="checkbox" id="customCheck16">
+                                    <label class="custom-control-label" for="customCheck16">Moderate</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" name="budget" type="checkbox" id="customCheck17">
+                                    <label class="custom-control-label" for="customCheck17">High-End</label>
+                                </div>
+                            </div>
+                        </div> 
                 </div>
                 <div class="row">
                     <div class="col-6">

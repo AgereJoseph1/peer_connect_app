@@ -1,5 +1,5 @@
 # Import necessary modules and classes
-from models import Event, Group
+from app.models import Event, Group
 from werkzeug.exceptions import NotFound
 from app import db
 from datetime import datetime
