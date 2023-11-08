@@ -1,12 +1,12 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from .controllers import user_controller,preference_controller,group_controller, invitetoken_controller, event_controller, places_controller
 from werkzeug.exceptions import BadRequest, NotFound
-from flask import Blueprint, jsonify, json
-from config import BASE_URL, API_KEY
+from flask import Blueprint, jsonify
+from config import Config
 import googlemaps
 
 app= Blueprint('main', __name__)
-gmaps = googlemaps.Client(key=API_KEY)
+gmaps = googlemaps.Client(key=Config.API_KEY)
 
 '''
 ================================================
@@ -52,7 +52,6 @@ def register():
             # Get user id
             user_id = session.get('user_id')
             # Redirect user to profile page
-            print(user_id)
             return redirect(url_for('main.user_profile', username=username)) 
         except BadRequest as e:
             flash('Registration failed. Username already exists.', 'error')
@@ -195,10 +194,16 @@ def meetup(group_id):
             event_controller.EventController.create_event(
                 activity_type,  group_id,duration,date,time
             )
-            flash('Meetup created successfully', 'success')
 
+            activity_details = {
+                'activity': places_controller.activity_type_mapping.get(activity_type),
+                'date': date,
+                'time': time,
+                'group_id': group_id
+            }
+            
             # Redirect to the places page
-            return redirect(url_for('main.places', group_id=group_id, activity=activity_type))
+            return redirect(url_for('main.places', group_id=group_id, activity_details=activity_details))
         
         except NotFound as e:
             flash('Group not found.', 'error')
@@ -239,17 +244,19 @@ def places(group_id):
             central_location = (avg_lat, avg_lng)
         
         # Retrieve activity type from query parameters or default to 'social'
-        test_activity_type = request.args.get('activity', 'social')
-
+        activity_type = request.args.get('at', 'social')
+        
+        
         # Get nearby places based on the activity type
-        nearby_places = places_controller.get_nearby_places(central_location, places_controller.activity_type_mapping, test_activity_type, gmaps)
+        nearby_places = places_controller.get_nearby_places(central_location, places_controller.activity_type_mapping, activity_type, gmaps)
         
         #TODO: Future implementation
         # Filter nearby places based on group preferences
         # filtered_places = places_controller.filter_places(nearby_places, grp_preferences)
 
+        activity_details = request.args.get('activity_details')
         # Render the places in the template
-        return render_template('places.html', places=nearby_places, group_id=group_id, api_key=API_KEY)
+        return render_template('places.html', places=nearby_places, api_key=Config.API_KEY, activity_details=activity_details, group_id=group_id)
 
 
 
@@ -262,6 +269,44 @@ Generate Invite Token
 def generate_invite(group_id):
     # generate invite token
     invite_token =   invitetoken_controller.InviteTokenController.generate_invite_token(group_id)
-    invite_link = BASE_URL + '/join-group/' + invite_token
+    invite_link = Config.BASE_URL + '/join-group/' + invite_token
     # return invite link
     return jsonify({'inviteLink': invite_link})
+
+
+'''
+================================================
+Broadcast Message to Group Members
+================================================
+'''
+@app.route('/broadcast', methods=['get'])
+def broadcast_email():
+    try:
+        # # Retrieve data from form submission
+        # place_name = request.args.get('place_name')
+        # place_address = request.args.get('place_address')
+        # activity_type = request.args.get('at')
+        # act_time = request.args.get('time')
+        # act_date = request.args.get('date')
+        # group_id = request.args.get('group_id')
+        
+        # # Construct the meeting details dictionary expected by the send_meeting_email function
+        # meeting_details = {
+        #     'activity': activity_type,
+        #     'time': act_time,
+        #     'date': act_date,
+        #     'location': f"{place_name}, {place_address}"
+        # }
+
+        # Call the send_meeting_email function
+        # group_controller.GroupController.send_meeting_email(group_id, meeting_details)
+    
+        # flash('Email sent successfully', 'success')
+        # return redirect(url_for('main.group_profile'))
+        return "<h1> Feature Under Development </h1>"
+    except NotFound as e:
+        # Handle not found errors (group or members not found)
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        # Handle other exceptions
+        return jsonify({'error': 'An error occurred while sending emails.'}), 500

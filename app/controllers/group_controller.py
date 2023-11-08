@@ -8,6 +8,7 @@ from flask import current_app as app
 from utils.func import allowed_file
 from flask_mail import Message
 from app import mail
+
 # Define a GroupController class to handle group-related actions
 class GroupController:
 
@@ -218,6 +219,8 @@ class GroupController:
             'dietary_restrictions': list(all_dietary_restrictions),
             'budget_preferences': list(all_budget_preferences)
         }
+
+
     @staticmethod
     def send_meeting_email(group_id, meeting_details):
         """
@@ -238,20 +241,22 @@ class GroupController:
         if not members:
             raise NotFound("No members found for the group.")
 
-        subject = f"Meeting Scheduled: {meeting_details['subject']}"
+        subject = f"Peer Connect - Let's Meet Up!"
         body = f"""
-        Dear Team,
+        Hello Team,
 
-        A meeting has been scheduled with the following details:
-        Subject: {meeting_details['subject']}
+        A member has requested a meeetup. The perfect spot has been found! 
+        Here are the details:
+        Activity: {meeting_details['activity']}
         Time: {meeting_details['time']}
         Date: {meeting_details['date']}
         Location: {meeting_details['location']}
 
         Please mark this in your calendars.
 
-        Best,
-        Meeting Organizer
+        Warm Regards,
+        ----------------------------------------
+        Peer Connect Team
         """
         
         with app.app_context():
@@ -264,3 +269,8 @@ class GroupController:
                     mail.send(msg)
                     
         return "Meeting notification sent to all group members."
+
+
+    
+    
+

@@ -16,10 +16,10 @@ class Config:
     BANNER_UPLOAD_FOLDER = os.path.join(basedir, 'banner_uploads')
 
     
-    MAIL_SERVER = 'smtp.example.com'  # Replace with your mail server
+    MAIL_SERVER = 'smtp.gmail.com'  # Replace with your mail server
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'your-email@example.com'  # Replace with your email
-    MAIL_PASSWORD = 'your-password'  # Replace with your password
-    MAIL_DEFAULT_SENDER = 'your-email@example.com'  # Replace with your email
+    MAIL_USERNAME = 'princemi1976@uds.edu.gh'  # Replace with your email
+    MAIL_PASSWORD = '19010225'  # Replace with your password
+    MAIL_DEFAULT_SENDER = 'princemi1976@uds.edu.gh'  # Replace with your email
 
