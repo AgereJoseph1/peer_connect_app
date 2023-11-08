@@ -6,7 +6,8 @@ from werkzeug.utils import secure_filename
 import os
 from flask import current_app as app
 from utils.func import allowed_file
-
+from flask_mail import Message
+from app import mail
 # Define a GroupController class to handle group-related actions
 class GroupController:
 
@@ -217,6 +218,49 @@ class GroupController:
             'dietary_restrictions': list(all_dietary_restrictions),
             'budget_preferences': list(all_budget_preferences)
         }
+    @staticmethod
+    def send_meeting_email(group_id, meeting_details):
+        """
+        Sends an email notification to all members of the group about a scheduled meeting.
 
+        Parameters:
+        - group_id: The ID of the group.
+        - meeting_details: A dictionary with details of the meeting like subject, time, date, location.
 
-    
+        Raises:
+        - NotFound: If the group does not exist.
+        """
+        group = Group.query.get(group_id)
+        if not group:
+            raise NotFound("Group not found.")
+
+        members = GroupMember.query.filter_by(group_id=group_id).all()
+        if not members:
+            raise NotFound("No members found for the group.")
+
+        subject = f"Meeting Scheduled: {meeting_details['subject']}"
+        body = f"""
+        Dear Team,
+
+        A meeting has been scheduled with the following details:
+        Subject: {meeting_details['subject']}
+        Time: {meeting_details['time']}
+        Date: {meeting_details['date']}
+        Location: {meeting_details['location']}
+
+        Please mark this in your calendars.
+
+        Best,
+        Meeting Organizer
+        """
+        
+        with app.app_context():
+            for member in members:
+                user = User.query.get(member.user_id)
+                if user and user.email:
+                    msg = Message(subject,
+                                  recipients=[user.email],
+                                  body=body)
+                    mail.send(msg)
+
+        return "Meeting notification sent to all group members."

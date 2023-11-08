@@ -20,7 +20,7 @@ class UserController:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     @staticmethod
-    def update_user_profile(user_id, email=None, phone=None, location_name=None, profile_picture=None):
+    def update_user_profile(user_id, email=None, phone_number=None, address=None,profile_picture=None):
         """
         Updates the profile information of a specific user.
 
@@ -51,13 +51,13 @@ class UserController:
                 raise BadRequest("Email already in use.")
             user.email = email
 
-        if phone:
-            if User.query.filter_by(phone=phone).first():
+        if phone_number:
+            if User.query.filter_by(phone_number=phone_number).first():
                 raise BadRequest("Phone number already in use.")
-            user.phone = phone
+            user.phone_number =phone_number
 
-        if location_name:
-            latitude, longitude = parse_lat_long(location_name)
+        if address:
+            latitude, longitude = parse_lat_long(address)
             user.latitude = latitude
             user.longitude = longitude
         
