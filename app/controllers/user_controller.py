@@ -3,7 +3,7 @@ from flask import current_app as app
 import os
 from app.models import User, db
 from werkzeug.utils import secure_filename
-from utils.func import resolve_location
+from utils.func import parse_lat_long
 from werkzeug.security import generate_password_hash
 from flask import session
 from werkzeug.exceptions import BadRequest, NotFound
@@ -57,7 +57,7 @@ class UserController:
             user.phone = phone
 
         if location_name:
-            latitude, longitude = resolve_location(location_name)
+            latitude, longitude = parse_lat_long(location_name)
             user.latitude = latitude
             user.longitude = longitude
         

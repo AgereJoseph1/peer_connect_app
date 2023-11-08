@@ -1,12 +1,12 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from .controllers import user_controller,preference_controller,group_controller, invitetoken_controller, event_controller, base_algorithm
+from .controllers import user_controller,preference_controller,group_controller, invitetoken_controller, event_controller, places_controller
 from werkzeug.exceptions import BadRequest, NotFound
-from flask import Blueprint, jsonify
-from config import BASE_URL
-from utils import func
+from flask import Blueprint, jsonify, json
+from config import BASE_URL, API_KEY
+import googlemaps
 
 app= Blueprint('main', __name__)
-
+gmaps = googlemaps.Client(key=API_KEY)
 
 '''
 ================================================
@@ -119,7 +119,7 @@ def user_profile(username):
             )
             flash('Profile updated successfully', 'success')
             # Redirect to a profile page
-            return redirect(url_for('user_profile', username=username))
+            return redirect(url_for('main.user_profile', username=username))
         except NotFound:
             flash('User not found', 'error')
         except BadRequest as e:
@@ -193,7 +193,11 @@ def meetup(group_id):
         try:
             # Create Activity
             event_controller.EventController.create_event(
-                group_id, activity_type, start_time, date, duration
+                group_id,
+                activity_type,
+                start_time,
+                date,
+                duration
             )
             flash('Meetup created successfully', 'success')
 
@@ -224,27 +228,33 @@ def places(group_id):
         grp_member_locations = group_controller.GroupController.get_group_member_locations(
             group_id
             )
-        
-        # Calculate the geographical center of the group
-        center = func.find_geographical_center(grp_member_locations)
-
         # Get group preferences
         grp_preferences = group_controller.GroupController.get_group_member_preferences(
             group_id
         )
-
-        # Perform Search
-
-        results = base_algorithm.find_central_spot(group_id)
-        print(results)
-        exit()
         
-        # Get group preferences
-        grp_preferences = group_controller.GroupController.get_group_member_preferences(
-            group_id
-        )
-    
-    return render_template('places.html')
+        # If there's only one member, use their location as the central point
+        if len(grp_member_locations) == 1:
+            central_location = grp_member_locations[0]
+        else:
+            # Calculate centroid for multiple members
+            avg_lat = sum(location[0] for location in grp_member_locations) / len(grp_member_locations)
+            avg_lng = sum(location[1] for location in grp_member_locations) / len(grp_member_locations)
+            central_location = (avg_lat, avg_lng)
+        
+        # Retrieve activity type from query parameters or default to 'social'
+        test_activity_type = 'ent_lei'
+
+        # Get nearby places based on the activity type
+        nearby_places = places_controller.get_nearby_places(central_location, places_controller.activity_type_mapping, test_activity_type, gmaps)
+        
+        #TODO: Future implementation
+        # Filter nearby places based on group preferences
+        # filtered_places = places_controller.filter_places(nearby_places, grp_preferences)
+
+        # Render the places in the template
+        return render_template('places.html', places=nearby_places, group_id=group_id, api_key=API_KEY)
+
 
 
 '''

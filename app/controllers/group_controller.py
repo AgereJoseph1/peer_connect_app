@@ -217,3 +217,6 @@ class GroupController:
             'dietary_restrictions': list(all_dietary_restrictions),
             'budget_preferences': list(all_budget_preferences)
         }
+
+
+    

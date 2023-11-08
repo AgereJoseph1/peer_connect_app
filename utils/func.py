@@ -3,12 +3,12 @@ import requests
 from flask import current_app as app
 import googlemaps
 from googlemaps.exceptions import ApiError
-
+from config import API_KEY
 
 
 def resolve_location(location_name):
     # Replace 'YOUR_API_KEY' with your actual Google Places API key
-    GOOGLE_API_KEY = app.config['GOOGLE_API_KEY']
+    GOOGLE_API_KEY = API_KEY
     
     # Endpoint URL for Google Places API TextSearch
     endpoint_url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
@@ -68,8 +68,8 @@ def find_geographical_center(locations):
     x_total, y_total, z_total = 0, 0, 0
     
     for lat, lon in locations:
-        lat_rad = math.radians(lat)
-        lon_rad = math.radians(lon)
+        lat_rad = math.radians(float(lat))
+        lon_rad = math.radians(float(lon))
         
         x_total += math.cos(lat_rad) * math.cos(lon_rad)
         y_total += math.cos(lat_rad) * math.sin(lon_rad)
@@ -122,5 +122,27 @@ def find_meeting_place_with_photo(api_key, location, place_type="restaurant"):
 def allowed_file(filename):
     # Ensure that the file has a valid extension
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+
+
+def parse_lat_long(lat_long_str):
+    """
+    Splits a string containing latitude and longitude separated by a comma.
+
+    Parameters:
+    - lat_long_str: A string with the format "latitude,longitude".
+
+    Returns:
+    - A tuple containing (latitude, longitude) as floats.
+
+    Raises:
+    - ValueError: If the input string is not properly formatted or values cannot be converted to floats.
+    """
+    try:
+        lat_str, long_str = lat_long_str.split(',')
+        latitude = float(lat_str.strip())
+        longitude = float(long_str.strip())
+        return latitude, longitude
+    except ValueError as e:
+        raise ValueError("Invalid input for latitude and longitude. Please use the format 'lat, long'") from e
 
 
