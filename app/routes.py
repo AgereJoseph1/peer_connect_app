@@ -187,13 +187,13 @@ def meetup(group_id):
         # Get the meetup details from form
         activity_type = request.form.get('activity_type')
         date = request.form.get('date')
-        # start_time = request.form.get('start_time')
+        start_time = request.form.get('start_time')
         duration = request.form.get('duration')
 
         try:
             # Create Activity
             event_controller.EventController.create_event(
-                group_id, activity_type, date, duration
+                group_id, activity_type, start_time, date, duration
             )
             flash('Meetup created successfully', 'success')
 
