@@ -4,57 +4,6 @@ from flask import current_app as app
 import googlemaps
 from googlemaps.exceptions import ApiError
 
-
-
-def resolve_location(location_name):
-    # Replace 'YOUR_API_KEY' with your actual Google Places API key
-    GOOGLE_API_KEY = app.config['GOOGLE_API_KEY']
-    
-    # Endpoint URL for Google Places API TextSearch
-    endpoint_url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-    
-    # Parameters for the API request
-    params = {
-        'query': location_name,
-        'key': GOOGLE_API_KEY
-    }
-    
-    try:
-        # Make a request to the Google Places API
-        response = requests.get(endpoint_url, params=params)
-        
-        # Check if the request was successful
-        if response.status_code != 200:
-            app.logger.error(f'Google API request failed with status: {response.status_code}')
-            return None, None
-
-        # Parse the response JSON
-        result = response.json()
-        
-        # Check if the API call returns results
-        if 'results' not in result or not result['results']:
-            app.logger.warning(f'No results found for location: {location_name}')
-            return None, None
-
-        # Get the location from the first result
-        location = result['results'][0]['geometry']['location']
-        
-        return location['lat'], location['lng']
-    
-    except requests.exceptions.RequestException as e:
-        # Handle any exceptions that occur during the HTTP request
-        app.logger.error(f'HTTP Request failed: {e}')
-        return None, None
-    except KeyError as e:
-        # Handle missing keys in the JSON response
-        app.logger.error(f'Key error when parsing JSON response: {e}')
-        return None, None
-    except Exception as e:
-        # Handle other possible exceptions
-        app.logger.error(f'An error occurred: {e}')
-        return None, None
-
-
 def find_geographical_center(locations):
     """
     Calculate the geographical center (centroid) for a set of geolocations.

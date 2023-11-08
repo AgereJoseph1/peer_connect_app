@@ -7,24 +7,45 @@ from datetime import datetime
 # Define an EventController class to handle event-related actions
 class EventController:
 
-    
+    @staticmethod
+    def parse_time(time_str):
+        try:
+            # Split the time string into hour and minute
+            hour, minute = time_str.split(':')
+
+            # Extract the meridiem (AM or PM) from the end of the string
+            meridiem = time_str[-2:]
+
+            # Create a datetime object with the specified format and return it
+            dt_obj = datetime.strptime(f"{hour}:{minute}", "%H:%M")
+            return dt_obj.time()
+        except ValueError:
+            raise ValueError(f"Invalid time string: {time_str}")
+
+    def parse_date(date_str):
+        """Converts a date string to a datetime.date object."""
+        return datetime.strptime(date_str, '%Y-%m-%d').date()
 
     @staticmethod
-    def create_event(group_id, activity_type,time,date,duration):
+    def create_event(activity_type,group_id,duration,date,time):
         """Creates a new event and adds it to the database."""
         # Check if the group exists in the database
         group = Group.query.get(group_id)
         if group is None:
             raise NotFound("Group not found.")
 
+        # Parse the date string to a date object
+        date = EventController.parse_date(date)
+        time =EventController.parse_time(time)
+
         # Create a new Event instance with the provided details
         event = Event(
-            group_id=group_id,
             activity_type=activity_type,
-            time=time,
-            date=date ,
-            duration=duration
-            
+            group_id=group_id,
+            duration=duration,
+            date=date,
+            time=time
+
         )
 
         # Add the new event to the database session and commit to save changes
@@ -32,6 +53,7 @@ class EventController:
         db.session.commit()
 
         return event
+    
 
     @staticmethod
     def update_event(event_id, **kwargs):

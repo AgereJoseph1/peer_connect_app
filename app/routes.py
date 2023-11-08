@@ -106,20 +106,20 @@ def user_profile(username):
     if request.method == 'POST':
         email = request.form.get('email')
         phone = request.form.get('phone')
-        location_name = request.form.get('address')
+        address = request.form.get('address')
         profile_pic = request.files.get('profile_pic')
 
         try:
             user_controller.UserController.update_user_profile(
                 user_id=session.get('user_id'),
                 email=email,
-                phone=phone,
-                location_name=location_name,
+                phone_number=phone,
+                address=address,
                 profile_picture=profile_pic
             )
             flash('Profile updated successfully', 'success')
             # Redirect to a profile page
-            return redirect(url_for('user_profile', username=username))
+            return redirect(url_for('main.preferences', username=username))
         except NotFound:
             flash('User not found', 'error')
         except BadRequest as e:
@@ -185,15 +185,15 @@ Route to Group Meetup
 def meetup(group_id):
     if request.method == 'POST':
         # Get the meetup details from form
-        activity_type = request.form.get('activity_type')
+        activity_type = request.form.get('activity')
         date = request.form.get('date')
-        start_time = request.form.get('start_time')
+        time = request.form.get('time')
         duration = request.form.get('duration')
 
         try:
             # Create Activity
             event_controller.EventController.create_event(
-                group_id, activity_type, start_time, date, duration
+                activity_type,  group_id,duration,date,time
             )
             flash('Meetup created successfully', 'success')
 

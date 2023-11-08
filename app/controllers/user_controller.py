@@ -3,7 +3,6 @@ from flask import current_app as app
 import os
 from app.models import User, db
 from werkzeug.utils import secure_filename
-from utils.func import resolve_location
 from werkzeug.security import generate_password_hash
 from flask import session
 from werkzeug.exceptions import BadRequest, NotFound
@@ -20,7 +19,7 @@ class UserController:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     @staticmethod
-    def update_user_profile(user_id, email=None, phone=None, location_name=None, profile_picture=None):
+    def update_user_profile(user_id, email=None, phone_number=None, address=None,profile_picture=None):
         """
         Updates the profile information of a specific user.
 
@@ -51,15 +50,28 @@ class UserController:
                 raise BadRequest("Email already in use.")
             user.email = email
 
-        if phone:
-            if User.query.filter_by(phone=phone).first():
+        if phone_number:
+            if User.query.filter_by(phone_number=phone_number).first():
                 raise BadRequest("Phone number already in use.")
-            user.phone = phone
+            user.phone_number =phone_number
 
-        if location_name:
-            latitude, longitude = resolve_location(location_name)
-            user.latitude = latitude
-            user.longitude = longitude
+        if address:
+        # Save the full address
+            user.address = address
+
+            # Split the address into latitude and longitude
+            try:
+                # Assuming the address is a string like "latitude, longitude"
+                parts = address.split(',')
+                if len(parts) == 2:
+                    latitude, longitude = [float(coord.strip()) for coord in parts]
+                    user.latitude = latitude
+                    user.longitude = longitude
+                else:
+                    raise ValueError("Address must be a comma-separated latitude and longitude.")
+            except ValueError as e:
+                raise BadRequest(str(e))
+            
         
         if profile_picture and UserController.allowed_file(profile_picture.filename):
             filename = secure_filename(profile_picture.filename)
