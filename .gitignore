@@ -1,1 +1,2 @@
-*.db
+git rm --cached peer_connect.db
+

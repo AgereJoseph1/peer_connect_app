@@ -1,5 +1,6 @@
 import requests
 from flask import current_app as app
+import os
 from app.models import User, db
 from werkzeug.utils import secure_filename
 from utils.func import resolve_location
@@ -62,6 +63,9 @@ class UserController:
         
         if profile_picture and UserController.allowed_file(profile_picture.filename):
             filename = secure_filename(profile_picture.filename)
+            # Ensure the UPLOAD_FOLDER exists
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.makedirs(app.config['UPLOAD_FOLDER'])
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             profile_picture.save(file_path)
             user.profile_picture = file_path
