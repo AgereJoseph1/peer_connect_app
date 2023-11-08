@@ -1,8 +1,9 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from .controllers import user_controller,preference_controller,group_controller, invitetoken_controller
+from .controllers import user_controller,preference_controller,group_controller, invitetoken_controller, event_controller, base_algorithm
 from werkzeug.exceptions import BadRequest, NotFound
 from flask import Blueprint, jsonify
 from config import BASE_URL
+from utils import func
 
 app= Blueprint('main', __name__)
 
@@ -168,11 +169,11 @@ def group_profile(group_id):
     try:
         group = group_controller.GroupController.get_group_details(group_id)
         # Render a template with the group details
-        return render_template('group-profile.html', group=group)
+        return render_template('group-profile.html', group=group, group_id=group_id)
     except NotFound as e:
         # Handle the case where the group is not found
         flash('Group not found.', 'error')
-        return redirect(url_for('main.create_group'))
+        return redirect(url_for('main.create_group', group_id=group_id))
 
 
 '''
@@ -185,17 +186,24 @@ def meetup(group_id):
     if request.method == 'POST':
         # Get the meetup details from form
         activity_type = request.form.get('activity_type')
-        # date = request.form.get('date')
-        start_time = request.form.get('start_time')
+        date = request.form.get('date')
+        # start_time = request.form.get('start_time')
         duration = request.form.get('duration')
-        
-        '''Create the meetup - > a controller to access 
-           each member's preferences and generate a list 
-           of places
-        '''
 
-        # Redirect to the places page
-        return redirect(url_for('main.meetup', group_id=group_id))
+        try:
+            # Create Activity
+            event_controller.EventController.create_event(
+                group_id, activity_type, date, duration
+            )
+            flash('Meetup created successfully', 'success')
+
+            # Redirect to the places page
+            return redirect(url_for('main.places', group_id=group_id))
+        
+        except NotFound as e:
+            flash('Group not found.', 'error')
+        except BadRequest as e:
+            flash(str(e), 'error')
 
     return render_template('meetup.html', group_id=group_id)
 
@@ -205,10 +213,36 @@ def meetup(group_id):
 Route to Places
 ================================================
 '''
-@app.route('/places', methods=['GET', 'POST'])
-def places():
-    if request.method == 'POST':
-        return "Hello places"
+@app.route('/places/<group_id>', methods=['GET'])
+def places(group_id):
+    if request.method == 'GET':
+        '''Create the meetup - > a controller to access 
+            each member's preferences and generate a list 
+            of places
+        '''
+        # Get group member locations
+        grp_member_locations = group_controller.GroupController.get_group_member_locations(
+            group_id
+            )
+        
+        # Calculate the geographical center of the group
+        center = func.find_geographical_center(grp_member_locations)
+
+        # Get group preferences
+        grp_preferences = group_controller.GroupController.get_group_member_preferences(
+            group_id
+        )
+
+        # Perform Search
+
+        results = base_algorithm.find_central_spot(group_id)
+        print(results)
+        exit()
+        
+        # Get group preferences
+        grp_preferences = group_controller.GroupController.get_group_member_preferences(
+            group_id
+        )
     
     return render_template('places.html')
 

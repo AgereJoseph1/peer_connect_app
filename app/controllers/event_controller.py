@@ -16,7 +16,7 @@ class EventController:
             raise ValueError("Date format must be YYYY-MM-DD HH:MM:SS")
 
     @staticmethod
-    def create_event(group_id, activity_type,time,duration):
+    def create_event(group_id, activity_type,date,duration):
         """Creates a new event and adds it to the database."""
         # Check if the group exists in the database
         group = Group.query.get(group_id)
@@ -24,14 +24,15 @@ class EventController:
             raise NotFound("Group not found.")
 
         # Parse and validate start_time and end_time
-        time= EventController.parse_date(time)
-      
+        time = EventController.parse_date(date)
+        print('Time' + time)
+        print('Date' + date)
 
         # Create a new Event instance with the provided details
         event = Event(
             group_id=group_id,
             activity_type=activity_type,
-            time=time,
+            date=date ,
             duration=duration
             
         )

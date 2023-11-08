@@ -133,3 +133,78 @@ class GroupController:
             raise NotFound("Group not found.")
 
         return group
+
+
+    # Static method to get all members location
+    @staticmethod
+    def get_group_member_locations(group_id):
+        """
+        Retrieves the locations (latitude and longitude) of all members of a group.
+
+        Parameters:
+        - group_id: The ID of the group.
+
+        Returns:
+        - A list of tuples, each containing the latitude and longitude of group members.
+
+        Raises:
+        - NotFound: If the group does not exist.
+        """
+        group = Group.query.get(group_id)
+        if not group:
+            raise NotFound("Group not found.")
+
+        member_locations = []
+        for group_member in group.members:
+            user = group_member.user
+            if user.latitude is not None and user.longitude is not None:
+                member_locations.append({
+                    'latitude': user.latitude,
+                    'longitude': user.longitude
+                })
+
+        if not member_locations:
+            raise NotFound("No member locations available for this group.")
+
+        return member_locations
+    
+
+    @staticmethod
+    def get_group_member_preferences(group_id):
+        """
+        Retrieves distinct lists of all preferences (ambiances, cuisines, dietary restrictions, 
+        and budget preferences) of all members of a group.
+
+        Parameters:
+        - group_id: The ID of the group.
+
+        Returns:
+        - A dictionary containing lists of distinct preferences for all group members.
+
+        Raises:
+        - NotFound: If the group does not exist or has no members.
+        """
+        group = Group.query.get(group_id)
+        if not group:
+            raise NotFound("Group not found.")
+
+        # Initialize sets to store unique preferences
+        all_ambiances = set()
+        all_cuisines = set()
+        all_dietary_restrictions = set()
+        all_budget_preferences = set()
+
+        for group_member in group.members:
+            user = group_member.user
+            all_ambiances.update(ambiance.name for ambiance in user.ambiances)
+            all_cuisines.update(cuisine.name for cuisine in user.cuisines)
+            all_dietary_restrictions.update(dietary.name for dietary in user.dietary_restrictions)
+            all_budget_preferences.update(budget.name for budget in user.budget_preferences)
+
+        # Convert sets to lists to return them
+        return {
+            'ambiances': list(all_ambiances),
+            'cuisines': list(all_cuisines),
+            'dietary_restrictions': list(all_dietary_restrictions),
+            'budget_preferences': list(all_budget_preferences)
+        }

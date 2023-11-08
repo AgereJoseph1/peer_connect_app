@@ -9,3 +9,5 @@ class Config:
     SECRET_KEY = 'your-secret-key'  # Used to add additional security for Flask sessions
 
 BASE_URL = 'http://localhost:5000'  # Base URL for the application
+
+API_KEY = 'AIzaSyAJ7BoV6AdTat8DK14e2nFCAqOHTl1asqM'
