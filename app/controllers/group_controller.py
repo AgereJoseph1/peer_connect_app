@@ -262,5 +262,5 @@ class GroupController:
                                   recipients=[user.email],
                                   body=body)
                     mail.send(msg)
-
+                    
         return "Meeting notification sent to all group members."
