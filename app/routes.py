@@ -4,7 +4,7 @@ from werkzeug.exceptions import BadRequest, NotFound
 from flask import Blueprint, jsonify
 from config import Config
 import googlemaps
-
+from flask import current_app as app
 app= Blueprint('main', __name__)
 gmaps = googlemaps.Client(key=Config.API_KEY)
 

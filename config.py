@@ -17,6 +17,7 @@ class Config:
 
     UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
     BANNER_UPLOAD_FOLDER = os.path.join(basedir, 'banner_uploads')
+    API_KEY = 'AIzaSyAJ7BoV6AdTat8DK14e2nFCAqOHTl1asqM'
 
     
     MAIL_SERVER = 'smtp.gmail.com'  # Replace with your mail server

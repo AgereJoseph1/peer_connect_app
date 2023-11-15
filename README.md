@@ -1,4 +1,4 @@
-# Project Documentation for Peer Connect
+ Project Documentation for Peer Connect
 
 
 ### Description of the App
