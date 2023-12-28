@@ -4,10 +4,8 @@
 ### Description of the App
 **Peer Connect**; an innovative application designed to facilitate easy meet-ups within groups. It calculates an optimal location for meetings based on member locations and preferences, and integrates with various APIs to enhance user experience.
 
-### Developer/Team Bios
-Adam Abusang: Full stack web developer with expertise in Flask and front-end development. Passionate about creating intuitive user experiences and business oriented applications.
 
-### Technical Components
+### Technical omCponents
 - Front-End: HTML, CSS, JavaScript, Bootstrap
 - Back-End: Python, Flask
 - Database: SQLite
