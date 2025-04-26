@@ -5,7 +5,7 @@
 **Peer Connect**; an innovative application designed to facilitate easy meet-ups within groups. It calculates an optimal location for meetings based on member locations and preferences, and integrates with various APIs to enhance user experience.
 
 
-### Technical omCponents
+### Technical Components
 - Front-End: HTML, CSS, JavaScript, Bootstrap
 - Back-End: Python, Flask
 - Database: SQLite
